@@ -3,6 +3,7 @@ if(process.env.NODE_ENV != "PRODUCTION"){
 }
 
 const express = require("express");
+const aiRoutes = require("./routes/generateDescription.js");
 const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
@@ -88,7 +89,6 @@ main().catch((err) => {
 app.get("/listings/category/:category",async(req,res)=>{
     
     let {category} = req.params;
-    console.log(category);
     const alllistings = await Listings.find({category});
     res.render("listing/index.ejs",{alllistings});
      
@@ -119,6 +119,7 @@ app.get("/listings/search/:searchValue",async(req,res)=>{
 
 // Route middlewares
 app.use("/listings", listingRoutes);
+app.use("/generate-description",aiRoutes);
 app.use("/listings/:id/reviews", reviewRoutes);
 app.use("/", userRoutes);
 

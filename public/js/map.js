@@ -1,15 +1,18 @@
 mapboxgl.accessToken = mapToken;
+
+const coordinates = listing.geometry.coordinates;
+console.log(coordinates);
 const map = new mapboxgl.Map({
     container: 'map', // container ID
     // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
     style: 'mapbox://styles/mapbox/outdoors-v12', // style URL
-    center:  [73.2207,3.2028], // starting position [lng, lat]
+    center:  coordinates, // starting position [lng, lat]
     zoom: 5 // starting zoom
 });
 
 
 const marker = new mapboxgl.Marker({color: "red"})
-.setLngLat([73.2207,3.2028])
+.setLngLat(coordinates)
 .setPopup(new mapboxgl.Popup({ offset: 24}).setHTML(
     `<h4>${listing.location}</h4><p>Exact Location will be provided after booking</p>`
 ))
@@ -90,7 +93,7 @@ map.on("load", () => {
           type: "Feature",
           geometry: {
             type: "Point",
-            coordinates: [73.2207,3.2028], // icon position [lng, lat]
+            coordinates: coordinates, // icon position [lng, lat]
           },
         },
       ],

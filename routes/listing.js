@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.route("/")
 .get(  wrapAsync(listingController.index))
- .post( upload.single('listing[image]'), wrapAsync(listingController.CreateListing));
+.post( upload.single('listing[image]'), wrapAsync(listingController.CreateListing));
  
 // New listing route
 router.get("/new", isLoggedIn, listingController.renderNewForm );

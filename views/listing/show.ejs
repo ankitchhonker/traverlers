@@ -119,8 +119,9 @@ font-size: larger;
 </style>
 <script>
   const mapToken = "<%= process.env.MAP_TOKEN %>";
-  const listing = JSON.parse('<%- JSON.stringify(listing) %>');
+  const listing = <%- JSON.stringify(listing || {}) %>
 </script>
+
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 
@@ -229,6 +230,7 @@ font-size: larger;
             <% } %>
           </div>
     </div>
+    
     <script src="/js/map.js"></script>
 </body>
  

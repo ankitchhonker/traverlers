@@ -1,4 +1,16 @@
 <% layout("layouts/boilerplate")%>
+<style>
+    .Gen-AI{
+        height: 30px;
+        border-radius: 5px;
+        margin-left: 80%;
+        margin-top: 6px;
+        color: white;
+        border: none;
+        background-color: #FE424D;
+        padding: 0 10px;
+    }
+</style>
 <body>
     <form action="/listings" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
 
@@ -10,19 +22,13 @@
 
         </div>
      
-        <div>
-            <label for="description"><b>Description</b></label>
-            <textarea name="listing[description]" placeholder="Enter some description.." id="description" class="form-control" required></textarea> 
-            <div class="invalid-feedback">please write the short description </div>
-
-
-        </div>
+        
 
         
 
         <div>
             <label for="image"> <b>Upload Image</b></label>
-             <input type="file" name="listing[image]" id="image" class="form-control" required>
+             <input type="file" name="listing[image]" id="image" class="form-control" >
              <div class="invalid-feedback">please choose the file image</div>
 
         </div>
@@ -46,7 +52,7 @@
 
         <div>
             <label for="Enter price"><b>Price</b></label>
-            <input type="text" name="listing[price]" placeholder="Enter price" id="Enter price" class="form-control" required>
+            <input type="text" name="listing[price]" placeholder="Enter price" id="price" class="form-control" required>
             <div class="invalid-feedback">please enter the price</div>
         </div> 
 
@@ -57,11 +63,33 @@
         </div>
 
         <div>
+  <label for="latitude"><b>Latitude</b></label>
+  <input type="text" name="listing[geometry][lat]" id="latitude" class="form-control" required>
+     </div>
+
+<div>
+  <label for="longitude"><b>Longitude</b></label>
+  <input type="text" name="listing[geometry][lng]" id="longitude" class="form-control" required>
+</div>
+
+<button type="button" onclick="getCurrentLocation()" class="btn btn-primary mt-2 Gen-AI">
+  📍 Use Current Location
+</button>
+
+
+        <div>
 
             <label for="country"><b>Country</b></label>
             <input type="text" name="listing[country]" placeholder="Enter country" id="country" class="form-control" required>
             <div class="invalid-feedback">please enter the country</div>
 
+        </div>
+
+        <div>
+            <label for="description"><b>Description</b></label>
+            <textarea name="listing[description]" placeholder="Enter some description.." id="description" class="form-control"></textarea> 
+            <div class="invalid-feedback">please write the short description </div>
+            <button type="button" class="Gen-AI" onclick="generateAI()">✨ Generate Description</button>
         </div>
     
       
@@ -69,4 +97,43 @@
     </form>
     
 </body>
- 
+ <script>
+
+async function getCurrentLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      document.getElementById("latitude").value = pos.coords.latitude;
+      document.getElementById("longitude").value = pos.coords.longitude;
+    }, (err) => {
+      alert("Error fetching location: " + err.message);
+    });
+  } else {
+    alert("Geolocation is not supported by your browser.");
+  }
+}
+    async function generateAI() {
+         
+
+    const title = document.getElementById("title").value;
+    const location = document.getElementById("location").value;
+    const country = document.getElementById("country").value;
+    const category = document.getElementById("category").value;
+    const price = document.getElementById("price").value;
+    const description = document.getElementById("description");
+    description.value = "⏳ Generating description..."; // temporary
+
+    const res = await fetch("/generate-description", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, location, country, category, price })
+    });
+
+    const data = await res.json();
+     
+    if (data.description) {
+        description.value = data.description;
+    } else {
+        description.value = "⚠️ Could not generate description";
+    }
+}
+ </script>

@@ -13,20 +13,39 @@ module.exports.renderNewForm = (req, res) => {
 
 module.exports.CreateListing=async (req, res, next) => {
 
-    let response = await geocodingClient
-    .forwardGeocode({
-        query: `${req.body.listing.location},${req.body.listing.country}`,
-        limit: 1,
-    })
-    .send();
+    // let response = await geocodingClient
+    // .forwardGeocode({
+    //     query: `${req.body.listing.location},${req.body.listing.country}`,
+    //     limit: 1,
+    // })
+    // .send();
      
-    let url = req.file.path;
-    let filename = req.file.filename;
-    const newlisting = new Listings(req.body.listing);
-    newlisting.owner = req.user;
-    newlisting.image = {url,filename};
-    newlisting.geometry = response.body.features[0].geometry;
-    await newlisting.save();
+    const { title, description, price, location, country, category } = req.body.listing;
+
+  const lat = parseFloat(req.body.listing.geometry.lat);
+  const lng = parseFloat(req.body.listing.geometry.lng);
+
+  const newListing = new Listings({
+    title,
+    description,
+    price,
+    location,
+    country,
+    category,
+    image: {
+      url: req.file.path,
+      filename: req.file.filename
+    },
+    geometry: {
+      type: "Point",
+      coordinates: [lng, lat] // GeoJSON format [lng, lat]
+    },
+    owner: req.user._id
+  });
+
+  await newListing.save();
+    // newlisting.geometry = response.body.features[0].geometry;
+    // console.log(response.body.features[0].geometry);
     req.flash("success", "Your listing has been added");
     res.redirect("/listings");
 }
@@ -35,7 +54,6 @@ module.exports.showListing=async (req, res) => {
     const listing = await Listings.findById(id).populate({path:"reviews",populate:{
    path:"author"
     }}).populate("owner");
-    console.log(listing);
     res.render("listing/show", { listing });
 }
 
@@ -48,11 +66,13 @@ module.exports.renderEditForm=async (req, res) => {
 
 module.exports.UpdateListing = async (req, res) => {
     const { id } = req.params;
+    console.log(req.body.listing);
     const updateListing = await Listings.findByIdAndUpdate(id, { ...req.body.listing });
     if (req.file) {
         const url = req.file.path;
         const filename = req.file.filename;
         updateListing.image = {url,filename};
+
         await updateListing.save();
     }   
     req.flash("success", "Edit Finished");

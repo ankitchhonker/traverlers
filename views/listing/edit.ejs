@@ -54,6 +54,19 @@
             <input type="text" name="listing[location]" value="<%= listing.location %>" class="form-control" required>
             <div class="invalid-feedback">please enter the current location</div>
         </div>
+        <div>
+  <label for="latitude"><b>Latitude</b></label>
+  <input type="text" name="listing[geometry][lat]" id="latitude" class="form-control" required>
+     </div>
+
+<div>
+  <label for="longitude"><b>Longitude</b></label>
+  <input type="text" name="listing[geometry][lng]" id="longitude" class="form-control" required>
+</div>
+
+<button type="button" onclick="getCurrentLocation()" class="btn btn-primary mt-2 Gen-AI">
+  📍 Use Current Location
+</button>
 
         <div>
             <label for="country"><b>Country</b></label>
@@ -65,5 +78,19 @@
         <button type="submit" class="submit"> Save </button>
     </form>
 </body>
+<script>
+    async function getCurrentLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      document.getElementById("latitude").value = pos.coords.latitude;
+      document.getElementById("longitude").value = pos.coords.longitude;
+    }, (err) => {
+      alert("Error fetching location: " + err.message);
+    });
+  } else {
+    alert("Geolocation is not supported by your browser.");
+  }
+}
+</script>
 <script src="/js/script.js"></script>
  
