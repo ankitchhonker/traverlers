@@ -64,20 +64,60 @@ module.exports.renderEditForm=async (req, res) => {
     res.render("listing/edit", { listing });
 }
 
-module.exports.UpdateListing = async (req, res) => {
-    const { id } = req.params;
-    console.log(req.body.listing);
-    const updateListing = await Listings.findByIdAndUpdate(id, { ...req.body.listing });
-    if (req.file) {
-        const url = req.file.path;
-        const filename = req.file.filename;
-        updateListing.image = {url,filename};
+// module.exports.UpdateListing = async (req, res) => {
+//     const { id } = req.params;
+//     console.log(req.body.listing);
+//     const updateListing = await Listings.findByIdAndUpdate(id, { ...req.body.listing });
+//     if (req.file) {
+//         const url = req.file.path;
+//         const filename = req.file.filename;
+//         updateListing.image = {url,filename};
 
-        await updateListing.save();
-    }   
-    req.flash("success", "Edit Finished");
-    res.redirect("/listings");
-}
+//         await updateListing.save();
+//     }   
+//     req.flash("success", "Edit Finished");
+//     res.redirect("/listings");
+// }
+
+module.exports.UpdateListing = async (req, res) => {
+  const { id } = req.params;
+
+  const { title, description, price, location, country, category } = req.body.listing;
+  const lat = parseFloat(req.body.listing.geometry?.lat);
+  const lng = parseFloat(req.body.listing.geometry?.lng);
+
+  const updateData = {
+    title,
+    description,
+    price,
+    location,
+    country,
+    category,
+  };
+
+  // If geometry is provided, update it too
+  if (!isNaN(lat) && !isNaN(lng)) {
+    updateData.geometry = {
+      type: "Point",
+      coordinates: [lng, lat],
+    };
+  }
+
+  const updateListing = await Listings.findByIdAndUpdate(id, updateData, { new: true });
+
+  // Handle new image if uploaded
+  if (req.file) {
+    updateListing.image = {
+      url: req.file.path,
+      filename: req.file.filename,
+    };
+    await updateListing.save();
+  }
+
+  req.flash("success", "Edit Finished");
+  res.redirect(`/listings/${id}`);
+};
+
 module.exports.DeleteListing =async (req, res) => {
     const { id } = req.params;
     await Listings.findByIdAndDelete(id);
