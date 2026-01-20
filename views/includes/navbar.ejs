@@ -89,14 +89,12 @@ h2{
           <a class="nav-link" href="/listings">Explore</a>
         </div>
         <div class="search-bar ms-auto  ">
-          
           <form class="form-inline my-2 my-lg-0 d-flex align-items-center" action="/listings/search/:searchValue">
             <input class="form-control mr-2 mb-3" type="search" name="searchTerm" placeholder="Enter place, location, country etc" aria-label="Search">
             <button class="btn btn-outline-danger my-2 my-sm-0 ms-2" type="submit">Search</button>
-          </form>
-          
-          
+          </form>          
         </div>
+
         <div class="navbar-nav ms-auto">
           <a class="nav-link" href="/listings/new">Add your home</a>
           <% if(!reqUser){ %>
@@ -107,6 +105,7 @@ h2{
             <a class="nav-link" href="/logout"><b>Log out</b></a>
           <% } %>
         </div>
+        
       </div>
     </div>
   </nav>

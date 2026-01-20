@@ -1,11 +1,7 @@
-// middleware.js
- 
-
-const Listing = require("./models/listing.js");
-const reviews = require("./models/reveiws.js");
-const { listingSchema, reviewSchema } = require("./schema.js");
-const ExpressError = require("./utils/ExpressError.js");
-
+import Listing from './models/listing.js';
+import reviews from './models/reveiws.js';
+import { listingSchema,reviewSchema } from './schema.js';
+import ExpressError from './utils/ExpressError.js';
 export const isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
     req.session.redirectUrl = req.originalUrl;
@@ -15,7 +11,7 @@ export const isLoggedIn = (req, res, next) => {
   next();
 };
 
-export const saveRedirect = (req, res, next) => {
+export const  saveRedirect = (req, res, next) => {
   if (req.session.redirectUrl) {
     res.locals.redirectUrl = req.session.redirectUrl;
     delete req.session.redirectUrl;

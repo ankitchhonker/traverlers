@@ -24,7 +24,7 @@ const reviewRoutes = require("./routes/review.js");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const { date } = require("joi");
- const Islogin = require("./middleware.js");
+const Islogin = require("./middleware.js");
 
 async function main() {
     await mongoose.connect(process.env.ATLASDB_URL,{
